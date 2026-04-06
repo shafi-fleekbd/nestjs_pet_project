@@ -1,10 +1,11 @@
+import { Optional } from 'sequelize';
 import {
-  Table,
-  Column,
-  Model,
-  DataType,
   BelongsTo,
+  Column,
+  DataType,
   ForeignKey,
+  Model,
+  Table,
 } from 'sequelize-typescript';
 import { Tenant } from '../tenants/tenants.model';
 
@@ -19,12 +20,49 @@ export enum UserStatus {
   Inactive = 'Inactive',
   Deleted = 'Deleted',
 }
+export interface UserAttributes {
+  id: number;
+  uuid: string;
+  name: string;
+  email?: string;
+  phone: string;
+  password_hash: string;
+  image_url?: string;
+  user_type: UserType;
+  tenant_id: number | null;
+  status?: UserStatus;
+  is_email_verified?: boolean;
+  last_login_at?: Date;
+  created_by?: number;
+  updated_by?: number;
+  deleted_by?: number;
+  created_at: Date;
+  updated_at?: Date;
+  deleted_at?: Date;
+}
+
+export interface UserCreationAttributes extends Optional<
+  UserAttributes,
+  | 'id'
+  | 'tenant_id'
+  | 'email'
+  | 'image_url'
+  | 'status'
+  | 'is_email_verified'
+  | 'last_login_at'
+  | 'created_by'
+  | 'updated_by'
+  | 'deleted_by'
+  | 'updated_at'
+  | 'deleted_at'
+> {}
 
 @Table({
   tableName: 'sys_users',
   timestamps: false,
 })
-export class User extends Model<User> {
+export class User extends Model<UserAttributes,
+  UserCreationAttributes> {
   @Column({
     type: DataType.BIGINT,
     primaryKey: true,
@@ -37,7 +75,7 @@ export class User extends Model<User> {
     allowNull: false,
     unique: true,
   })
-  uuid: string;
+  declare uuid: string;
 
   @Column({
     type: DataType.STRING(100),
@@ -75,7 +113,7 @@ export class User extends Model<User> {
     type: DataType.BIGINT,
     allowNull: true,
   })
-  tenant_id: number;
+  declare tenant_id: number | null;
 
   @BelongsTo(() => Tenant, 'tenant_id')
   tenant: Tenant;

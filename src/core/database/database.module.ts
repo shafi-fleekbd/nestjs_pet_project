@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigService } from '@nestjs/config';
+import { User } from '../../modules/user-management/users/users.model';
+import { Tenant } from '../../modules/user-management/tenants/tenants.model';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { ConfigService } from '@nestjs/config';
         database: config.get('DB_NAME'),
         autoLoadModels: false,
         synchronize: false,
+
+        models: [User, Tenant],
       }),
     }),
   ],
